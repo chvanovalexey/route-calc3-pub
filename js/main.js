@@ -32,7 +32,7 @@ let routes = [];
 // Function to load routes from CSV
 async function loadRoutesFromCSV() {
     try {
-        const response = await fetch('/test_route.csv');
+        const response = await fetch('test_route.csv');
         const csvText = await response.text();
         
         // Split into lines and remove header
