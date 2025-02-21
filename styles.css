@@ -1,0 +1,251 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#map { 
+    height: 100%;
+    width: 100%;
+}
+
+.controls { 
+    margin: 0;
+    display: flex;
+    gap: 0;
+    height: 100vh;
+}
+
+.route-selector {
+    position: fixed;
+    left: 10px;
+    top: 100px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.147);
+    backdrop-filter: blur(1px);
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+}
+
+/* Новый класс для обертки списка с прокруткой */
+.route-list-wrapper {
+    overflow-y: auto;
+    flex-grow: 1;
+    margin-top: 15px;
+    
+    /* Стилизация скроллбара */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+/* Перемещаем стили скроллбара с .route-selector на .route-list-wrapper */
+.route-list-wrapper::-webkit-scrollbar {
+    width: 6px;
+}
+
+.route-list-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.route-list-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    border: none;
+}
+
+.route-list-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.route-list {
+    min-width: 180px;
+    max-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 5px;
+}
+
+.route-list-container {
+    display: none;
+}
+
+.route-list-container h3 {
+    display: none;
+}
+
+.route-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+    padding: 4px 6px;
+    border: 1px solid rgba(238, 238, 238, 0.5);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 10px;
+    min-height: 24px;
+    box-sizing: border-box;
+}
+
+.route-item:hover {
+    background-color: rgba(109, 88, 88, 0.616);
+}
+
+.route-item input[type="checkbox"] {
+    margin-right: 6px;
+    cursor: pointer;
+    transform: scale(1);
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.route-item label {
+    cursor: pointer;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 2px 0;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.map-container {
+    flex: 1;
+    height: 100vh;
+}
+
+.leaflet-interactive {
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
+}
+
+.route-line {
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    shape-rendering: geometricPrecision;
+    vector-effect: non-scaling-stroke;
+}
+
+.route-line:hover {
+    stroke-width: 6;
+    transition: stroke-width 0.2s;
+}
+
+.port-marker {
+    background: #fff;
+    border: 2px solid #000066;
+    border-radius: 50%;
+    color: #000066;
+    font-weight: bold;
+    text-align: center;
+    line-height: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.past-route {
+    stroke-width: 3;
+}
+
+.future-route {
+    stroke-width: 3;
+    stroke-dasharray: 5, 10;
+}
+
+.port-marker.current-position {
+    background: #ff9800;
+    border-color: #f57c00;
+    color: #fff;
+    font-size: 14px;
+}
+
+.port-marker span {
+    display: block;
+    font-size: 24px;
+    line-height: 20px;
+    text-align: center;
+}
+
+.controls-panel {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+/* Обновляем стили кнопки */
+.update-button {
+    width: 100%;
+    padding: 8px;
+    background: #2979FF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    flex-shrink: 0; /* Предотвращает сжатие кнопки */
+}
+
+.update-button:hover {
+    background: #2196F3;
+}
+
+.update-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.stats-section {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    z-index: 1000;
+    margin: 10px 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    max-height: 400px;
+    overflow-y: auto;
+    font-size: 14px;
+    width: 200px;
+}
+
+.stats-section h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.stats-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 13px;
+    color: #666;
+}
+
+.stats-item span {
+    font-weight: bold;
+    color: #333;
+}
+
+.api-info {
+    margin: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-family: monospace;
+    white-space: pre-wrap;
+    max-height: 200px;
+    overflow-y: auto;
+} 
