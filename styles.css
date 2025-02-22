@@ -1,8 +1,16 @@
+/* Базовые стили для всех устройств */
+:root {
+    --panel-width: 220px;
+    --panel-padding: 15px;
+    --mobile-header-height: 60px;
+}
+
 body {
     margin: 0;
     padding: 0;
     height: 100vh;
     overflow: hidden;
+    font-size: 16px; /* Базовый размер шрифта */
 }
 
 #map { 
@@ -22,17 +30,16 @@ body {
     left: 44px;
     top: 100px;
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.147);
-    backdrop-filter: blur(1px);
-    padding: 15px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    background: rgba(255, 255, 255, 0.9); /* Увеличиваем непрозрачность для лучшей читаемости */
+    backdrop-filter: blur(5px);
+    padding: var(--panel-padding);
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.15);
     display: flex;
     flex-direction: column;
     max-height: 80vh;
-    min-width: 200px;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    transform-origin: left center;
+    width: var(--panel-width);
+    transition: all 0.3s ease;
 }
 
 /* Новый класс для обертки списка с прокруткой */
@@ -86,12 +93,14 @@ body {
     display: flex;
     align-items: center;
     margin-bottom: 4px;
-    padding: 4px 6px;
+    padding: 8px 10px;
     cursor: pointer;
     transition: background-color 0.2s;
-    font-size: 10px;
+    font-size: 14px;
     min-height: 24px;
     box-sizing: border-box;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .route-item:hover {
@@ -183,15 +192,11 @@ body {
 }
 
 /* Обновляем стили кнопки */
-.update-button {
-    width: 100%;
-    padding: 8px;
-    background: #2979FF;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    flex-shrink: 0; /* Предотвращает сжатие кнопки */
+.update-button, .select-button {
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    margin: 5px 0;
 }
 
 .update-button:hover {
@@ -377,4 +382,132 @@ body {
 
 .route-selector.collapsed + .toggle-panel-button {
     left: 10px;
+}
+
+/* Медиа-запросы для планшетов */
+@media (max-width: 1024px) {
+    .route-selector {
+        --panel-width: 200px;
+        font-size: 14px;
+    }
+
+    .route-item {
+        padding: 6px 8px;
+    }
+}
+
+/* Медиа-запросы для мобильных устройств */
+@media (max-width: 768px) {
+    :root {
+        --panel-width: 100%;
+        --panel-padding: 10px;
+    }
+
+    body {
+        font-size: 14px;
+    }
+
+    /* Перемещаем панель вниз для мобильных устройств */
+    .route-selector {
+        left: 0;
+        bottom: 0;
+        top: auto;
+        width: 100%;
+        max-height: 50vh;
+        border-radius: 15px 15px 0 0;
+        padding: 20px var(--panel-padding) calc(env(safe-area-inset-bottom) + 10px);
+    }
+
+    /* Стиль для заголовка панели на мобильных */
+    .mobile-panel-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .mobile-panel-handle {
+        width: 40px;
+        height: 4px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 2px;
+        margin-bottom: 10px;
+    }
+
+    /* Адаптируем кнопку сворачивания для мобильных */
+    .toggle-panel-button {
+        top: auto;
+        bottom: calc(50vh + 10px);
+        left: 50%;
+        transform: translateX(-50%) rotate(90deg);
+        border-radius: 6px;
+        width: 30px;
+        height: 30px;
+    }
+
+    .route-selector.collapsed {
+        transform: translateY(100%);
+    }
+
+    /* Увеличиваем размер интерактивных элементов */
+    .route-item {
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    .route-item input[type="checkbox"] {
+        transform: scale(1.2);
+        margin-right: 12px;
+    }
+
+    /* Адаптируем кнопки */
+    .selection-buttons {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .select-button {
+        flex: 1;
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .update-button {
+        padding: 15px;
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    /* Адаптируем всплывающие окна */
+    .port-popup-container {
+        width: 90%;
+        max-width: 300px;
+    }
+
+    .port-popup {
+        padding: 15px;
+    }
+}
+
+/* Поддержка тёмной темы */
+@media (prefers-color-scheme: dark) {
+    .route-selector {
+        background: rgba(30, 30, 30, 0.9);
+        color: #fff;
+    }
+
+    .route-item {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .update-button, .select-button {
+        background: #2979FF;
+        color: white;
+    }
+
+    .toggle-panel-button {
+        background: rgba(30, 30, 30, 0.9);
+        color: #fff;
+    }
 } 

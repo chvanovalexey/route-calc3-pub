@@ -588,4 +588,78 @@ async function updateAllRoutes() {
 }
 
 // Загружаем маршруты при запуске приложения
-loadRoutesFromCSV(); 
+loadRoutesFromCSV();
+
+// Добавляем поддержку мобильных жестов
+function initializeMobileSupport() {
+    const panel = document.querySelector('.route-selector');
+    
+    // Добавляем мобильный заголовок
+    const mobileHeader = document.createElement('div');
+    mobileHeader.className = 'mobile-panel-header';
+    mobileHeader.innerHTML = `
+        <div class="mobile-panel-handle"></div>
+    `;
+    panel.insertBefore(mobileHeader, panel.firstChild);
+
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    let initialPanelBottom = 0;
+
+    panel.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+        touchStartTime = Date.now();
+        initialPanelBottom = panel.getBoundingClientRect().bottom;
+        panel.style.transition = 'none';
+    });
+
+    panel.addEventListener('touchmove', (e) => {
+        const deltaY = e.touches[0].clientY - touchStartY;
+        const newBottom = Math.max(50, Math.min(initialPanelBottom - deltaY, window.innerHeight));
+        
+        if (window.innerWidth <= 768) {
+            panel.style.bottom = `${window.innerHeight - newBottom}px`;
+        }
+    });
+
+    panel.addEventListener('touchend', (e) => {
+        panel.style.transition = 'all 0.3s ease';
+        const deltaY = e.changedTouches[0].clientY - touchStartY;
+        const deltaTime = Date.now() - touchStartTime;
+        const velocity = Math.abs(deltaY / deltaTime);
+
+        if (window.innerWidth <= 768) {
+            if (deltaY > 100 || (deltaY > 50 && velocity > 0.5)) {
+                panel.classList.add('collapsed');
+                toggleButton.innerHTML = '▲';
+            } else {
+                panel.classList.remove('collapsed');
+                panel.style.bottom = '0';
+                toggleButton.innerHTML = '▼';
+            }
+        }
+    });
+
+    // Обновляем поведение кнопки для мобильных устройств
+    const toggleButton = document.querySelector('.toggle-panel-button');
+    if (window.innerWidth <= 768) {
+        toggleButton.innerHTML = '▼';
+    }
+}
+
+// Вызываем функцию после загрузки страницы
+document.addEventListener('DOMContentLoaded', initializeMobileSupport);
+
+// Обрабатываем изменение размера окна
+window.addEventListener('resize', () => {
+    const panel = document.querySelector('.route-selector');
+    const toggleButton = document.querySelector('.toggle-panel-button');
+    
+    if (window.innerWidth <= 768) {
+        panel.style.bottom = panel.classList.contains('collapsed') ? '100%' : '0';
+        toggleButton.innerHTML = panel.classList.contains('collapsed') ? '▲' : '▼';
+    } else {
+        panel.style.bottom = 'auto';
+        toggleButton.innerHTML = panel.classList.contains('collapsed') ? '▶' : '◀';
+    }
+}); 
