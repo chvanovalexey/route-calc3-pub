@@ -19,7 +19,7 @@ body {
 
 .route-selector {
     position: fixed;
-    left: 10px;
+    left: 44px;
     top: 100px;
     z-index: 1000;
     background: rgba(255, 255, 255, 0.147);
@@ -30,6 +30,9 @@ body {
     display: flex;
     flex-direction: column;
     max-height: 80vh;
+    min-width: 200px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform-origin: left center;
 }
 
 /* Новый класс для обертки списка с прокруткой */
@@ -84,7 +87,6 @@ body {
     align-items: center;
     margin-bottom: 4px;
     padding: 4px 6px;
-
     cursor: pointer;
     transition: background-color 0.2s;
     font-size: 10px;
@@ -247,4 +249,132 @@ body {
     white-space: pre-wrap;
     max-height: 200px;
     overflow-y: auto;
+}
+
+/* Добавляем стили для контейнера кнопок выбора */
+.selection-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+/* Стили для кнопок выбора */
+.select-button {
+    flex: 1;
+    padding: 6px;
+    background: #2979FF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s;
+}
+
+.select-button:hover {
+    background: #2196F3;
+}
+
+.select-button:active {
+    background: #1976D2;
+}
+
+/* Стили для всплывающего окна */
+.port-popup-container {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(5px);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.port-popup {
+    padding: 10px;
+}
+
+.port-popup h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.port-details {
+    font-size: 13px;
+}
+
+.detail-item {
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.detail-item .label {
+    color: #666;
+    font-weight: 500;
+}
+
+.detail-item .value {
+    color: #333;
+}
+
+/* Стили для стрелки всплывающего окна */
+.port-popup-container .leaflet-popup-tip {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+/* Стили для кнопки закрытия */
+.port-popup-container .leaflet-popup-close-button {
+    color: #666;
+    font-size: 16px;
+    padding: 5px;
+    font-weight: normal;
+}
+
+.port-popup-container .leaflet-popup-close-button:hover {
+    color: #333;
+}
+
+/* Обновляем стили для кнопки сворачивания */
+.toggle-panel-button {
+    position: fixed;
+    left: 10px;
+    top: 100px;
+    width: 24px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.147);
+    backdrop-filter: blur(1px);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #333;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1001;
+}
+
+.toggle-panel-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Обновляем стили для анимации панели */
+.route-selector.collapsed {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Позиционирование кнопки при развернутой/свернутой панели */
+.route-selector:not(.collapsed) + .toggle-panel-button {
+    left: 10px;
+}
+
+.route-selector.collapsed + .toggle-panel-button {
+    left: 10px;
 } 

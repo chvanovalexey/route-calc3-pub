@@ -110,6 +110,36 @@ updateButton.id = 'updateAllRoutes';
 updateButton.className = 'update-button';
 updateButton.textContent = 'Обновить все маршруты';
 
+// Создаем контейнер для кнопок выбора
+const selectionButtons = document.createElement('div');
+selectionButtons.className = 'selection-buttons';
+
+// Создаем кнопку "Выбрать всё"
+const selectAllButton = document.createElement('button');
+selectAllButton.className = 'select-button';
+selectAllButton.textContent = 'Выбрать всё';
+selectAllButton.addEventListener('click', () => {
+    document.querySelectorAll('#routeList input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = true;
+        checkbox.dispatchEvent(new Event('change'));
+    });
+});
+
+// Создаем кнопку "Очистить всё"
+const clearAllButton = document.createElement('button');
+clearAllButton.className = 'select-button';
+clearAllButton.textContent = 'Очистить всё';
+clearAllButton.addEventListener('click', () => {
+    document.querySelectorAll('#routeList input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = false;
+        checkbox.dispatchEvent(new Event('change'));
+    });
+});
+
+// Добавляем кнопки в контейнер
+selectionButtons.appendChild(selectAllButton);
+selectionButtons.appendChild(clearAllButton);
+
 // Создаем контейнер для списка маршрутов
 const routeListWrapper = document.createElement('div');
 routeListWrapper.className = 'route-list-wrapper';
@@ -117,14 +147,58 @@ routeListWrapper.appendChild(document.getElementById('routeList'));
 
 // Добавляем элементы в правильном порядке
 routeSelector.appendChild(updateButton);
+routeSelector.appendChild(selectionButtons);
 routeSelector.appendChild(routeListWrapper);
 
 // Добавляем обработчик события для кнопки
 updateButton.addEventListener('click', updateAllRoutes);
 
+// Обновляем создание кнопки сворачивания
+const toggleButton = document.createElement('button');
+toggleButton.className = 'toggle-panel-button';
+toggleButton.innerHTML = '◀'; // Стрелка влево
+toggleButton.title = 'Свернуть панель';
+
+// Обновляем обработчик для кнопки
+toggleButton.addEventListener('click', () => {
+    const panel = document.querySelector('.route-selector');
+    const isCollapsed = panel.classList.toggle('collapsed');
+    
+    // Меняем стрелку и подсказку в зависимости от состояния
+    if (isCollapsed) {
+        toggleButton.innerHTML = '▶';
+        toggleButton.title = 'Развернуть панель';
+    } else {
+        toggleButton.innerHTML = '◀';
+        toggleButton.title = 'Свернуть панель';
+    }
+});
+
+// Добавляем кнопку после панели (важно для правильного позиционирования)
+routeSelector.parentNode.insertBefore(toggleButton, routeSelector.nextSibling);
+
 // Добавляем функцию для форматирования времени
 function formatTime(ms) {
     return `${Math.round(ms)}ms`;
+}
+
+// Добавляем функцию для создания popup контента
+function createPortPopupContent(portInfo, isStart = true) {
+    return `
+        <div class="port-popup">
+            <h3>${portInfo.port}</h3>
+            <div class="port-details">
+                <div class="detail-item">
+                    <span class="label">Тип:</span>
+                    <span class="value">${isStart ? 'Порт отправления' : 'Порт назначения'}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Координаты:</span>
+                    <span class="value">${portInfo.lat.toFixed(4)}°, ${portInfo.lng.toFixed(4)}°</span>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 // Обновляем функцию calculateRoute, добавляя параметр isBatchUpdate
@@ -223,6 +297,10 @@ async function calculateRoute(route, retryCount = 0, isBatchUpdate = false) {
                     html: `<span style="color: ${getRouteColor(route.id)}">●</span>`,
                     iconSize: [20, 20]
                 })
+            }).bindPopup(createPortPopupContent(route.from, true), {
+                className: 'port-popup-container',
+                maxWidth: 300,
+                offset: [0, -10]
             }).addTo(map);
             startMarker.routeId = route.id;
             routeLayers.push(startMarker);
@@ -239,7 +317,21 @@ async function calculateRoute(route, retryCount = 0, isBatchUpdate = false) {
                             iconSize: [20, 20]
                         })
                     }
-                ).addTo(map);
+                ).bindPopup(`
+                    <div class="port-popup">
+                        <h3>Текущая позиция</h3>
+                        <div class="port-details">
+                            <div class="detail-item">
+                                <span class="label">Координаты:</span>
+                                <span class="value">${route.currentPosition.lat.toFixed(4)}°, ${route.currentPosition.lng.toFixed(4)}°</span>
+                            </div>
+                        </div>
+                    </div>
+                `, {
+                    className: 'port-popup-container',
+                    maxWidth: 300,
+                    offset: [0, -10]
+                }).addTo(map);
                 currentPosMarker.routeId = route.id;
                 routeLayers.push(currentPosMarker);
             }
@@ -251,6 +343,10 @@ async function calculateRoute(route, retryCount = 0, isBatchUpdate = false) {
                     html: `<span style="color: ${getRouteColor(route.id)}">●</span>`,
                     iconSize: [20, 20]
                 })
+            }).bindPopup(createPortPopupContent(route.to, false), {
+                className: 'port-popup-container',
+                maxWidth: 300,
+                offset: [0, -10]
             }).addTo(map);
             endMarker.routeId = route.id;
             routeLayers.push(endMarker);
